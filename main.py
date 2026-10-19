@@ -26,35 +26,34 @@ def envoyer_alerte_email(sujet, message):
         server.login(MAIL_USER, MAIL_PASSWORD)
         server.sendmail(MAIL_USER, MAIL_USER, msg.as_string())
         server.quit()
-        print("[SUCCÈS] E-mail d'alerte de radar envoyé avec succès !")
+        print("[SUCCÈS] E-mail d'alerte de radar optimisé envoyé avec succès !")
     except Exception as e:
         print(f"[ERREUR] Échec de l'envoi de l'e-mail : {e}")
 
-def radar_jeux_video():
-    print("--- Lancement du Radar : Jeux PS5 & Switch (< 15€) ---")
+def radar_jeux_video_opti():
+    print("--- Lancement du Radar Optimisé : Jeux PS5 & Switch ---")
     
-    # Paramètres de ta recherche
+    # Paramètres de recherche ultra-ciblés
     mots_cles = "jeu ps5 switch"
     budget_max = 15
     
-    # Création automatique du lien direct de recherche LeBonCoin
+    # URL optimisée avec catégorie jeux vidéo (c=27) et tri par date (sort=time)
     query_encoded = urllib.parse.quote(mots_cles)
-    lien_direct = f"https://www.leboncoin.fr/recherche?text={query_encoded}&price=max-{budget_max}"
+    lien_direct = f"https://www.leboncoin.fr/recherche?category=27&text={query_encoded}&price=max-{budget_max}&sort=time"
     
-    # Construction du message avec le vrai lien cliquable
     message = (
-        f"🎯 TON RADAR DE RECHERCHE EST PRÊT !\n\n"
-        f"Voici ton lien direct personnalisé pour voir les offres en temps réel :\n"
-        f"- Critères : Jeux PS5 / Switch\n"
+        f"🎯 TON RADAR OPTIMISÉ EST PRÊT !\n\n"
+        f"Ce lien filtre directement par catégorie 'Jeux vidéo' et trie par nouveauté :\n"
+        f"- Critères : PS5 / Switch\n"
         f"- Budget max : {budget_max} €\n\n"
-        f"👉 Clique sur ce lien pour voir les annonces :\n"
+        f"👉 Clique ici pour voir les vraies nouveautés :\n"
         f"{lien_direct}\n\n"
-        f"Il te suffit de cliquer pour consulter les nouveautés instantanément !"
+        f"Teste ce lien depuis ton e-mail pour voir la différence !"
     )
     
-    envoyer_alerte_email("🚨 Radar Bon Plan : Voir les annonces PS5/Switch", message)
+    envoyer_alerte_email("🚨 Radar Opti : Jeux PS5/Switch à -15€", message)
 
 if __name__ == "__main__":
-    print("Démarrage du radar de bonnes affaires...")
-    radar_jeux_video()
-    print("Exécution du radar terminée.")
+    print("Démarrage du radar optimisé...")
+    radar_jeux_video_opti()
+    print("Exécution terminée.")
