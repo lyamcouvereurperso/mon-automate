@@ -28,29 +28,41 @@ def envoyer_alerte_email(sujet, message):
         server.login(MAIL_USER, MAIL_PASSWORD)
         server.sendmail(MAIL_USER, MAIL_USER, msg.as_string())
         server.quit()
-        print("[SUCCÈS] E-mail d'alerte envoyé avec succès !")
+        print("[SUCCÈS] E-mail d'alerte de radar envoyé avec succès !")
     except Exception as e:
         print(f"[ERREUR] Échec de l'envoi de l'e-mail : {e}")
 
-def mission_surveillance_marche():
-    print("--- Lancement de la Mission 1 : Surveillance ---")
-    url = "https://api.github.com"
+def radar_jeux_video():
+    print("--- Lancement du Radar : Jeux PS5 & Switch (< 15€) ---")
     
-    try:
-        headers = {'User-Agent': 'Mozilla/5.0'}
-        req = urllib.request.Request(url, headers=headers)
-        time.sleep(1)
-        reponse = urllib.request.urlopen(req, timeout=5)
-        
-        # Si tout va bien, on envoie l'e-mail de succès
-        message = "Bonjour,\n\nLa mission de surveillance s'est déroulée avec succès et l'automate fonctionne parfaitement !"
-        envoyer_alerte_email("Rapport Automate : Mission Réussie 🚀", message)
-        
-    except Exception as e:
-        print(f"[ERREUR] Mission 1 : {e}")
-        envoyer_alerte_email("Alerte Automate : Erreur détectée ⚠️", str(e))
+    # Ici, on configure la recherche pour cibler nos critères
+    plateformes = ["PS5", "Nintendo Switch"]
+    budget_max = 15
+    
+    # Simulation de la veille du marché (le script analyse les critères)
+    # Dans les prochaines étapes, on branchera des sources d'annonces en direct.
+    trouvaille_exemple = {
+        "titre": "Jeu Nintendo Switch - Bon plan détecté",
+        "prix": 12,
+        "plateforme": "Nintendo Switch",
+        "lien": "https://www.leboncoin.fr (Exemple de lien à surveiller)"
+    }
+    
+    if trouvaille_exemple["prix"] <= budget_max:
+        message = (
+            f"🎯 ALERTE BON PLAN JEU VIDÉO !\n\n"
+            f"Un article correspondant à tes critères a été repéré :\n"
+            f"- Article : {trouvaille_exemple['titre']}\n"
+            f"- Plateforme : {trouvaille_exemple['plateforme']}\n"
+            f"- Prix : {trouvaille_exemple['prix']} € (Inférieur à ton max de {budget_max} €)\n"
+            f"- Lien : {trouvaille_exemple['lien']}\n\n"
+            f"Fonce vérifier l'annonce pour faire une revente !"
+        )
+        envoyer_alerte_email("🚨 Radar Bon Plan : Jeu PS5/Switch à -15€ !", message)
+    else:
+        print("Aucune offre sous les 15€ pour le moment.")
 
 if __name__ == "__main__":
-    print("Démarrage du pipeline avec alertes e-mail...")
-    mission_surveillance_marche()
-    print("Exécution terminée.")
+    print("Démarrage du radar de bonnes affaires...")
+    radar_jeux_video()
+    print("Exécution du radar terminée.")
