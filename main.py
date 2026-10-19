@@ -1,51 +1,59 @@
-import urllib.request
-import json
+import os
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 import random
 import time
+import urllib.request
+import json
 
-# Liste de navigateurs fictifs pour que les requêtes restent furtives et évitent les blocages
-USER_AGENTS = [
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2.1 Safari/605.1.15",
-    "Mozilla/5.0 (X11; Linux x86_64; rv:121.0) Gecko/20100101 Firefox/121.0"
-]
+# Récupération des secrets configurés dans GitHub
+MAIL_USER = os.getenv("MAIL_USER")
+MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
+
+def envoyer_alerte_email(sujet, message):
+    if not MAIL_USER or not MAIL_PASSWORD:
+        print("[AVERTISSEMENT] Identifiants e-mail non trouvés, impossible d'envoyer l'alerte.")
+        return
+
+    try:
+        msg = MIMEMultipart()
+        msg['From'] = MAIL_USER
+        msg['To'] = MAIL_USER
+        msg['Subject'] = sujet
+        msg.attach(MIMEText(message, 'plain'))
+
+        # Connexion au serveur sécurisé de Gmail
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(MAIL_USER, MAIL_PASSWORD)
+        server.sendmail(MAIL_USER, MAIL_USER, msg.as_string())
+        server.quit()
+        print("[SUCCÈS] E-mail d'alerte envoyé avec succès !")
+    except Exception as e:
+        print(f"[ERREUR] Échec de l'envoi de l'e-mail : {e}")
 
 def mission_surveillance_marche():
-    print("--- Lancement de la Mission 1 : Surveillance et Analyse ---")
+    print("--- Lancement de la Mission 1 : Surveillance ---")
     url = "https://api.publicapis.org/entries"
     
     try:
-        headers = {'User-Agent': random.choice(USER_AGENTS)}
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
         req = urllib.request.Request(url, headers=headers)
-        
-        # Petite pause aléatoire pour imiter un comportement naturel
-        time.sleep(random.uniform(1.0, 3.0))
-        
+        time.sleep(1)
         reponse = urllib.request.urlopen(req, timeout=5)
         data = json.loads(reponse.read().decode('utf-8'))
         total = data.get('count', 0)
-        print(f"[SUCCÈS] Mission 1 validée : {total} éléments scannés sans encombre.")
+        
+        # Si tout va bien, on prépare un petit message
+        message = f"Bonjour,\n\nLa mission de surveillance s'est déroulée avec succès.\nTotal des éléments scannés : {total}."
+        envoyer_alerte_email("Rapport Automate : Mission Réussie 🚀", message)
+        
     except Exception as e:
         print(f"[ERREUR] Mission 1 : {e}")
-
-def mission_micro_taches():
-    print("--- Lancement de la Mission 2 : Requêtes et Vérifications Furtives ---")
-    # Simulation d'un appel sur une cible secondaire ou une API de données ouvertes
-    url = "https://httpbin.org/json"
-    
-    try:
-        headers = {'User-Agent': random.choice(USER_AGENTS)}
-        req = urllib.request.Request(url, headers=headers)
-        
-        time.sleep(random.uniform(2.0, 4.0))
-        
-        reponse = urllib.request.urlopen(req, timeout=5)
-        print("[SUCCÈS] Mission 2 validée : Connexion furtive établie et données traitées.")
-    except Exception as e:
-        print(f"[ERREUR] Mission 2 : {e}")
+        envoyer_alerte_email("Alerte Automate : Erreur détectée ⚠️", str(e))
 
 if __name__ == "__main__":
-    print("Démarrage du pipeline multi-tâches automatisé...")
+    print("Démarrage du pipeline avec alertes e-mail...")
     mission_surveillance_marche()
-    mission_micro_taches()
-    print("Toutes les missions du jour sont terminées avec succès.")
+    print("Exécution terminée.")
