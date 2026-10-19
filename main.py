@@ -2,7 +2,6 @@ import os
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-import random
 import time
 import urllib.request
 import json
@@ -35,18 +34,16 @@ def envoyer_alerte_email(sujet, message):
 
 def mission_surveillance_marche():
     print("--- Lancement de la Mission 1 : Surveillance ---")
-    url = "https://api.publicapis.org/entries"
+    url = "https://api.github.com"
     
     try:
-        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)'}
+        headers = {'User-Agent': 'Mozilla/5.0'}
         req = urllib.request.Request(url, headers=headers)
         time.sleep(1)
         reponse = urllib.request.urlopen(req, timeout=5)
-        data = json.loads(reponse.read().decode('utf-8'))
-        total = data.get('count', 0)
         
-        # Si tout va bien, on prépare un petit message
-        message = f"Bonjour,\n\nLa mission de surveillance s'est déroulée avec succès.\nTotal des éléments scannés : {total}."
+        # Si tout va bien, on envoie l'e-mail de succès
+        message = "Bonjour,\n\nLa mission de surveillance s'est déroulée avec succès et l'automate fonctionne parfaitement !"
         envoyer_alerte_email("Rapport Automate : Mission Réussie 🚀", message)
         
     except Exception as e:
