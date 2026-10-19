@@ -1,0 +1,22 @@
+name: Mon Automate de Tâches
+
+on:
+  schedule:
+    # S'exécute tous les jours à 8h00 UTC
+    - cron: '0 8 * * *'
+  workflow_dispatch: # Permet aussi de le lancer manuellement en 1 clic
+
+jobs:
+  executer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: Installer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Lancer le script
+        run: python main.py
